@@ -115,7 +115,7 @@ class LoginScreen extends StatelessWidget {
                       //push to Home Screen
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeTab()),
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

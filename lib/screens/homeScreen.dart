@@ -1,3 +1,8 @@
+import 'package:alzimerapp/screens/accountScreen.dart';
+import 'package:alzimerapp/screens/mindGames.dart';
+import 'package:alzimerapp/screens/mriScan.dart';
+import 'package:alzimerapp/screens/report.dart.dart';
+import 'package:alzimerapp/screens/result.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,18 +16,14 @@ class _HomeScreenState extends State<HomeScreen> {
   // This will hold the widget for each tab
   final List<Widget> _children = [
     HomeTab(),
-    Text('Report Page'),
-    Text('Result Page'),
-    Text('Account Page')
+    ReportPage(),
+    ResultPage(),
+    AccountInfoPage()
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('He'),
-        // backgroundColor: Colors.purple,
-      ),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -67,6 +68,10 @@ class HomeTab extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               // Handle MRI Scan button press
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MRIPage()),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white, // Background color
@@ -101,6 +106,10 @@ class HomeTab extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               // Handle Mind Games button press
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MindGamesPage()),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white, // Background color
