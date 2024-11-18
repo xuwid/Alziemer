@@ -1,195 +1,275 @@
+import 'dart:io';
+
 import 'package:alzimerapp/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:alzimerapp/provider/fontprovider.dart'; // Import FontProvider
 
-class Registerscreen extends StatelessWidget {
+class Registerscreen extends StatefulWidget {
+  @override
+  _RegisterscreenState createState() => _RegisterscreenState();
+}
+
+class _RegisterscreenState extends State<Registerscreen> {
+  File? _selectedImage; // Store the selected image
+
+  // Method to check permissions and pick image
+  Future<void> _pickImage(ImageSource source) async {
+    // Request permission for camera or gallery
+    if (source == ImageSource.camera) {
+      final cameraStatus = await Permission.camera.request();
+      if (cameraStatus.isGranted) {
+        _pickImageFromSource(source);
+      } else {
+        _showPermissionDeniedSnackbar("Camera permission denied.");
+      }
+    } else if (source == ImageSource.gallery) {
+      final galleryStatus = await Permission.photos.request();
+      if (galleryStatus.isGranted) {
+        _pickImageFromSource(source);
+      } else {
+        _showPermissionDeniedSnackbar("Gallery permission denied.");
+      }
+    }
+  }
+
+  // Method to pick the image once permission is granted
+  Future<void> _pickImageFromSource(ImageSource source) async {
+    try {
+      final pickedFile = await ImagePicker().pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error picking image: $e")),
+      );
+    }
+  }
+
+  // Method to show permission denied message
+  void _showPermissionDeniedSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Back button
-                Card(
-                  //make the border black
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(color: Colors.black.withOpacity(0.4)),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  elevation: 2,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios,
-                        color: Colors.black, size: 20),
-                    onPressed: () {
-                      // Handle back button press
-                      Navigator.pop(context);
-                    },
-                    padding: EdgeInsets.all(16),
-                    iconSize: 36,
-                    splashRadius: 24,
-                  ),
-                ),
-
-                // Register Title
-                const Text(
-                  'Register',
-                  style: TextStyle(
-                    color: Colors.purple,
-                    fontSize: 32,
-                    //  fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                SizedBox(height: 8),
-
-                // Subtitle
-                const Text(
-                  'Glad to have you here',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                  ),
-                ),
-
-                SizedBox(height: 30),
-
-                // Input fields
-                _buildTextField('Name'),
-                SizedBox(height: 20),
-                _buildTextField('Age'),
-                SizedBox(height: 20),
-                _buildTextFieldWithIcon('Select picture', Icons.attach_file),
-                SizedBox(height: 20),
-                _buildTextField('Email address'),
-                SizedBox(height: 20),
-                _buildTextField('Password'),
-
-                SizedBox(height: 30),
-
-                // Social Media buttons
-                Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        'Or register with',
+    return Consumer<FontProvider>(
+      builder: (context, fontProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios,
+                  color: Colors.black, size: 20),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              padding: const EdgeInsets.all(16),
+              iconSize: 36,
+              splashRadius: 24,
+            ),
+            automaticallyImplyLeading: false,
+          ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text(
+                        'Register',
                         style: TextStyle(
+                          fontFamily: fontProvider
+                              .currentFont, // Apply font dynamically
                           color: Colors.purple,
-                          fontSize: 16,
+                          fontSize: 32,
                         ),
                       ),
-                      SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Glad to have you here',
+                      style: TextStyle(
+                        fontFamily:
+                            fontProvider.currentFont, // Apply font dynamically
+                        color: Colors.black,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    _buildTextField('Name', fontProvider),
+                    const SizedBox(height: 20),
+                    _buildTextField('Age', fontProvider),
+                    const SizedBox(height: 20),
+
+                    // Updated Select Picture button
+                    _buildSelectPictureButton(fontProvider),
+
+                    const SizedBox(height: 20),
+                    _buildTextField('Email address', fontProvider),
+                    const SizedBox(height: 20),
+                    _buildTextField('Password', fontProvider),
+                    const SizedBox(height: 30),
+
+                    Center(
+                      child: Column(
                         children: [
-                          _buildSocialIcon(
-                              'lib/assets/google.jpg'), // Google logo asset
-                          // Twitter logo asset
+                          Text(
+                            'Or register with',
+                            style: TextStyle(
+                              fontFamily: fontProvider
+                                  .currentFont, // Apply font dynamically
+                              color: Colors.purple,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildSocialIcon('lib/assets/google.jpg'),
+                            ],
+                          ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-
-                // Submit button (login icon)
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle login action
-                      //Pushing to Home Screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        side: BorderSide(color: Colors.purple),
-                      ),
-                      padding: EdgeInsets.all(5),
-                      backgroundColor: Colors.white,
-                      elevation: 5,
-                      shadowColor: Colors.purple,
                     ),
-                    child: Icon(Icons.login, size: 28, color: Colors.purple),
-                  ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            side: BorderSide(color: Colors.purple),
+                          ),
+                          padding: const EdgeInsets.all(5),
+                          backgroundColor: Colors.white,
+                          elevation: 5,
+                          shadowColor: Colors.purple,
+                        ),
+                        child: const Icon(Icons.login,
+                            size: 28, color: Colors.purple),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                  ],
                 ),
-
-                SizedBox(height: 30),
-              ],
+              ),
             ),
           ),
+        );
+      },
+    );
+  }
+
+  // Button for selecting a picture
+  Widget _buildSelectPictureButton(FontProvider fontProvider) {
+    return Card(
+      elevation: 20,
+      child: InkWell(
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.camera_alt),
+                    title: Text(
+                      'Take a photo',
+                      style: TextStyle(
+                        fontFamily:
+                            fontProvider.currentFont, // Apply font dynamically
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _pickImage(ImageSource.camera);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.photo),
+                    title: Text(
+                      'Choose from gallery',
+                      style: TextStyle(
+                        fontFamily:
+                            fontProvider.currentFont, // Apply font dynamically
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _pickImage(ImageSource.gallery);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Icon(Icons.attach_file, color: Colors.purple),
+              const SizedBox(width: 10),
+              Text(
+                'Select picture',
+                style: TextStyle(
+                  fontFamily:
+                      fontProvider.currentFont, // Apply font dynamically
+                  color: Colors.grey,
+                ),
+              ),
+              const Spacer(),
+              if (_selectedImage != null)
+                CircleAvatar(
+                  backgroundImage: FileImage(_selectedImage!),
+                  radius: 20,
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Helper method to build a simple text field
-  Widget _buildTextField(String hintText) {
+  Widget _buildTextField(String hintText, FontProvider fontProvider) {
     return Card(
       elevation: 20,
       child: TextField(
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(color: Colors.grey),
+          hintStyle: TextStyle(
+            fontFamily: fontProvider.currentFont, // Apply font dynamically
+            color: Colors.grey,
+          ),
           filled: true,
           fillColor: Colors.white,
           contentPadding: const EdgeInsets.all(17),
-          // Border will be invisible
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none, // No visible border
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none, // No visible border when enabled
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none, // No visible border when focused
+            borderSide: BorderSide.none,
           ),
         ),
       ),
     );
   }
 
-// Helper method to build a text field with an icon
-  Widget _buildTextFieldWithIcon(String hintText, IconData icon) {
-    return Card(
-      elevation: 20,
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: const TextStyle(color: Colors.grey),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.all(17),
-          suffixIcon: Icon(icon, color: Colors.purple),
-          // Border will be invisible
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none, // No visible border
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none, // No visible border when enabled
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none, // No visible border when focused
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Helper method to build social media buttons
   Widget _buildSocialIcon(String assetPath) {
     return Container(
       height: 50,

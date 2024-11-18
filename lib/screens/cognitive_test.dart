@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
+import 'package:provider/provider.dart';
+import 'package:alzimerapp/provider/fontprovider.dart'; // Import FontProvider
 
 void main() {
   runApp(MyApp());
@@ -13,7 +15,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.teal,
-        //accentColor: Colors.tealAccent,
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: Colors.black87, fontSize: 20),
           bodySmall: TextStyle(color: Colors.black54),
@@ -28,33 +29,46 @@ class MyApp extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Cognitive Test Home'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CognitiveTestPage()),
-            );
-          },
-          child: Text(
-            'Start Cognitive Test',
-            style: TextStyle(fontSize: 18),
+    return Consumer<FontProvider>(
+      builder: (context, fontProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios,
+                  color: Colors.black, size: 20),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              padding: EdgeInsets.all(16),
+              iconSize: 36,
+              splashRadius: 24,
+            ),
+            automaticallyImplyLeading: false,
           ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.teal,
-            foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+          body: Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CognitiveTestPage()),
+                );
+              },
+              child: Text(
+                'Start Cognitive Test',
+                style: TextStyle(fontSize: 18),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -208,83 +222,99 @@ class _CognitiveTestPageState extends State<CognitiveTestPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Cognitive Test'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (!_isInputVisible) ...[
-              Text(
-                'Trial $_currentTrial',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _generateSequence,
-                child: Text('Start Trial'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+    return Consumer<FontProvider>(
+      builder: (context, fontProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Cognitive Test', style: TextStyle(fontSize: 24)),
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios,
+                  color: Colors.black, size: 20),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              padding: EdgeInsets.all(16),
+              iconSize: 36,
+              splashRadius: 24,
+            ),
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (!_isInputVisible) ...[
+                  Text(
+                    'Trial $_currentTrial',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
-                ),
-              ),
-            ] else ...[
-              Text(
-                'Enter the sequence:',
-                style: TextStyle(fontSize: 24),
-              ),
-              SizedBox(height: 20),
-              Wrap(
-                spacing: 8.0,
-                children: List.generate(10, (index) {
-                  return ElevatedButton(
-                    onPressed: _isTrialComplete
-                        ? null
-                        : () {
-                            setState(() {
-                              _userInput.add(index);
-                            });
-                          },
-                    child: Text(index.toString()),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _generateSequence,
+                    child: Text('Start Trial'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          _isTrialComplete ? Colors.grey : Colors.teal,
+                      backgroundColor: Colors.teal,
                       foregroundColor: Colors.white,
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(20),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
-                  );
-                }),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isTrialComplete ? null : _checkInput,
-                child: Text('Check Input'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
                   ),
-                ),
-              ),
-              if (_isTrialComplete) ...[
-                SizedBox(height: 20),
-                Text('Your Input: ${_userInput.join(' ')}',
-                    style: TextStyle(fontSize: 18)),
+                ] else ...[
+                  Text(
+                    'Enter the sequence:',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  SizedBox(height: 20),
+                  Wrap(
+                    spacing: 8.0,
+                    children: List.generate(10, (index) {
+                      return ElevatedButton(
+                        onPressed: _isTrialComplete
+                            ? null
+                            : () {
+                                setState(() {
+                                  _userInput.add(index);
+                                });
+                              },
+                        child: Text(index.toString()),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              _isTrialComplete ? Colors.grey : Colors.teal,
+                          foregroundColor: Colors.white,
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(20),
+                        ),
+                      );
+                    }),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _isTrialComplete ? null : _checkInput,
+                    child: Text('Check Input'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                  if (_isTrialComplete) ...[
+                    SizedBox(height: 20),
+                    Text('Your Input: ${_userInput.join(' ')}',
+                        style: TextStyle(fontSize: 18)),
+                  ],
+                ],
               ],
-            ],
-          ],
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

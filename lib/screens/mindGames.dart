@@ -2,24 +2,36 @@ import 'package:alzimerapp/screens/cognitive_test.dart';
 import 'package:alzimerapp/screens/drawingPage.dart';
 import 'package:alzimerapp/screens/stroop_test.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts package
+import 'package:alzimerapp/provider/fontprovider.dart'; // Import FontProvider
 
 class MindGamesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          padding: EdgeInsets.all(16),
+          iconSize: 36,
+          splashRadius: 24,
+        ),
       ),
-      home: Scaffold(
-        body: Padding(
+      body: Container(
+        child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // 'Mind Games' Text updated to use dynamic font
               Text(
                 'Mind Games',
-                style: TextStyle(
+                style: GoogleFonts.getFont(
+                  Provider.of<FontProvider>(context).currentFont,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -37,7 +49,12 @@ class MindGamesPage extends StatelessWidget {
                             builder: (context) => CognitiveTestPage()),
                       );
                     },
-                    child: Text('Cognitive Test'),
+                    child: Text(
+                      'Cognitive Test',
+                      style: GoogleFonts.getFont(
+                        Provider.of<FontProvider>(context).currentFont,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       side: BorderSide(color: Colors.purple),
                       minimumSize: Size(150, 100),
@@ -54,7 +71,12 @@ class MindGamesPage extends StatelessWidget {
                             builder: (context) => StroopTestPage()),
                       );
                     },
-                    child: Text('Stroop Test'),
+                    child: Text(
+                      'Stroop Test',
+                      style: GoogleFonts.getFont(
+                        Provider.of<FontProvider>(context).currentFont,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       side: BorderSide(color: Colors.purple),
                       minimumSize: Size(150, 100),
@@ -78,7 +100,12 @@ class MindGamesPage extends StatelessWidget {
                             builder: (context) => DrawingTestPage()),
                       );
                     },
-                    child: Text('Drawing Test'),
+                    child: Text(
+                      'Drawing Test',
+                      style: GoogleFonts.getFont(
+                        Provider.of<FontProvider>(context).currentFont,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(150, 100),
                       side: BorderSide(color: Colors.purple),

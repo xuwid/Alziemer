@@ -1,11 +1,26 @@
+import 'package:alzimerapp/forgotPasswordPage.dart';
 import 'package:alzimerapp/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:alzimerapp/provider/fontprovider.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          padding: EdgeInsets.all(16),
+          iconSize: 36,
+          splashRadius: 24,
+        ),
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -13,44 +28,36 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Back button
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(color: Colors.black.withOpacity(0.4)),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  elevation: 2,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios,
-                        color: Colors.black, size: 20),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    padding: EdgeInsets.all(16),
-                    iconSize: 36,
-                    splashRadius: 24,
-                  ),
-                ),
-
                 // Login Title
-                const Text(
-                  'Login',
-                  style: TextStyle(
-                    color: Colors.purple,
-                    fontSize: 32,
+                Center(
+                  child: Consumer<FontProvider>(
+                    builder: (context, fontProvider, child) {
+                      return Text(
+                        'Login',
+                        style: GoogleFonts.getFont(
+                          fontProvider.currentFont,
+                          color: Colors.purple,
+                          fontSize: 32,
+                        ),
+                      );
+                    },
                   ),
                 ),
 
                 SizedBox(height: 8),
 
                 // Subtitle
-                const Text(
-                  'Glad to have you back',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                  ),
+                Consumer<FontProvider>(
+                  builder: (context, fontProvider, child) {
+                    return Text(
+                      'Glad to have you back',
+                      style: GoogleFonts.getFont(
+                        fontProvider.currentFont,
+                        color: Colors.black,
+                        fontSize: 18,
+                      ),
+                    );
+                  },
                 ),
 
                 SizedBox(height: 30),
@@ -68,13 +75,23 @@ class LoginScreen extends StatelessWidget {
                   child: TextButton(
                     onPressed: () {
                       // Handle forgot password
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ForgotPasswordPage()),
+                      );
                     },
-                    child: Text(
-                      'Forgot Password',
-                      style: TextStyle(
-                        color: Colors.black,
-                        decoration: TextDecoration.underline,
-                      ),
+                    child: Consumer<FontProvider>(
+                      builder: (context, fontProvider, child) {
+                        return Text(
+                          'Forgot Password',
+                          style: GoogleFonts.getFont(
+                            fontProvider.currentFont,
+                            color: Colors.black,
+                            decoration: TextDecoration.underline,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -85,12 +102,17 @@ class LoginScreen extends StatelessWidget {
                 Center(
                   child: Column(
                     children: [
-                      Text(
-                        'Or login with',
-                        style: TextStyle(
-                          color: Colors.purple,
-                          fontSize: 16,
-                        ),
+                      Consumer<FontProvider>(
+                        builder: (context, fontProvider, child) {
+                          return Text(
+                            'Or login with',
+                            style: GoogleFonts.getFont(
+                              fontProvider.currentFont,
+                              color: Colors.purple,
+                              fontSize: 16,
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(height: 15),
                       Row(

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:alzimerapp/provider/fontprovider.dart'; // Import your FontProvider
 
 void main() {
   runApp(MyApp());
@@ -20,45 +23,53 @@ class ReportPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize
-                .min, // Makes the column take minimal vertical space
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildReportTitle('Test Report'),
-                    _buildTestCard(
-                        'Cognitive Test', 20, 30, '1.2s', 'Good progress!'),
-                    _buildTestCard('Scrooping Test', 18, 30, '1.5s',
-                        'Can improve further.'),
-                    _buildTestCard(
-                        'Drawing Test', 25, 30, '1.1s', 'Excellent!'),
-                    _buildMRIScanReport(),
-                    _buildTestDateAndTime(),
-                  ],
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize
+                  .min, // Makes the column take minimal vertical space
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildReportTitle('Test Report', context),
+                      _buildTestCard('Cognitive Test', 20, 30, '1.2s',
+                          'Good progress!', context),
+                      _buildTestCard('Scrooping Test', 18, 30, '1.5s',
+                          'Can improve further.', context),
+                      _buildTestCard('Drawing Test', 25, 30, '1.1s',
+                          'Excellent!', context),
+                      _buildMRIScanReport(context),
+                      _buildTestDateAndTime(context),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildReportTitle(String title) {
+  Widget _buildReportTitle(String title, BuildContext context) {
     return Center(
       child: Text(
         title,
-        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+        style: GoogleFonts.getFont(
+          Provider.of<FontProvider>(context).currentFont,
+        ).copyWith(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 
   Widget _buildTestCard(String testName, int correctAnswers, int totalQuestions,
-      String averageTime, String message) {
+      String averageTime, String message, BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -73,7 +84,9 @@ class ReportPage extends StatelessWidget {
           children: [
             Text(
               testName,
-              style: TextStyle(
+              style: GoogleFonts.getFont(
+                Provider.of<FontProvider>(context).currentFont,
+              ).copyWith(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.teal,
@@ -84,18 +97,31 @@ class ReportPage extends StatelessWidget {
               children: [
                 Text(
                   'Total Score: $correctAnswers/$totalQuestions',
-                  style: TextStyle(fontSize: 18),
+                  style: GoogleFonts.getFont(
+                    Provider.of<FontProvider>(context).currentFont,
+                  ).copyWith(
+                    fontSize: 18,
+                  ),
                 ),
               ],
             ),
             Text(
               'Average Time: $averageTime',
-              style: TextStyle(fontSize: 18),
+              style: GoogleFonts.getFont(
+                Provider.of<FontProvider>(context).currentFont,
+              ).copyWith(
+                fontSize: 18,
+              ),
             ),
             SizedBox(height: 10),
             Text(
               message,
-              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+              style: GoogleFonts.getFont(
+                Provider.of<FontProvider>(context).currentFont,
+              ).copyWith(
+                fontSize: 16,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ],
         ),
@@ -103,7 +129,7 @@ class ReportPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMRIScanReport() {
+  Widget _buildMRIScanReport(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -117,7 +143,9 @@ class ReportPage extends StatelessWidget {
           children: [
             Text(
               'MRI Scan Report',
-              style: TextStyle(
+              style: GoogleFonts.getFont(
+                Provider.of<FontProvider>(context).currentFont,
+              ).copyWith(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.redAccent,
@@ -126,7 +154,11 @@ class ReportPage extends StatelessWidget {
             SizedBox(height: 10),
             Text(
               'No abnormalities detected.',
-              style: TextStyle(fontSize: 18),
+              style: GoogleFonts.getFont(
+                Provider.of<FontProvider>(context).currentFont,
+              ).copyWith(
+                fontSize: 18,
+              ),
             ),
           ],
         ),
@@ -134,11 +166,16 @@ class ReportPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTestDateAndTime() {
+  Widget _buildTestDateAndTime(BuildContext context) {
     return Center(
       child: Text(
         'Test Date & Time: ${DateTime.now().toLocal()}',
-        style: TextStyle(fontSize: 16, color: Colors.grey),
+        style: GoogleFonts.getFont(
+          Provider.of<FontProvider>(context).currentFont,
+        ).copyWith(
+          fontSize: 16,
+          color: Colors.grey,
+        ),
       ),
     );
   }

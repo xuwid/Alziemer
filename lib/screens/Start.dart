@@ -5,10 +5,10 @@ import 'dart:async';
 
 class StartPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _StartPageState createState() => _StartPageState();
 }
 
-class _LoginPageState extends State<StartPage> {
+class _StartPageState extends State<StartPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   Timer? _timer;
@@ -119,13 +119,11 @@ class _LoginPageState extends State<StartPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Login Button
-// Login Button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Add your login navigation or function
-                      //Pushing to Login Screen
+                      // Pushing to Login Screen
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -156,13 +154,12 @@ class _LoginPageState extends State<StartPage> {
 
                 SizedBox(height: 15),
 
-// Register Button
+                // Register Button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Add your register navigation or function
-                      //Pushing to Register Screen
+                      // Pushing to Register Screen
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -193,20 +190,6 @@ class _LoginPageState extends State<StartPage> {
                 ),
 
                 SizedBox(height: 20),
-
-                // Forgot Password Text
-                GestureDetector(
-                  onTap: () {
-                    // Add your forgot password functionality
-                  },
-                  child: const Text(
-                    'Forgot Password',
-                    style: TextStyle(
-                      color: Colors.black,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
 
                 SizedBox(height: 40),
               ],

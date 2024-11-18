@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart'; // Import share package
 import 'package:provider/provider.dart';
 import 'package:alzimerapp/provider/provider.dart'; // Import the theme provider
+import 'package:google_fonts/google_fonts.dart';
+import 'package:alzimerapp/provider/fontprovider.dart'; // Import the FontProvider
 
 class AccountInfoPage extends StatelessWidget {
   @override
@@ -37,11 +39,13 @@ class AccountInfoPage extends StatelessWidget {
                             children: [
                               Text(
                                 'Name',
-                                style: TextStyle(
-                                  fontFamily: 'Belleza',
-                                  fontSize: 20,
-                                  color: Color(0xFF26093F),
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                      fontSize: 20,
+                                      color: Color(0xFF26093F),
+                                    ),
                               ),
                               Spacer(),
                               PopupMenuButton<String>(
@@ -71,11 +75,11 @@ class AccountInfoPage extends StatelessWidget {
                           SizedBox(height: 10),
                           Text(
                             'Email Address',
-                            style: TextStyle(
-                              fontFamily: 'Belleza',
-                              fontSize: 20,
-                              color: Color(0xFF26093F),
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      fontSize: 20,
+                                      color: Color(0xFF26093F),
+                                    ),
                           ),
                         ],
                       ),
@@ -86,6 +90,7 @@ class AccountInfoPage extends StatelessWidget {
 
                 // Set Notifications Button
                 buildButton(
+                  context: context,
                   label: 'Set Notifications',
                   icon: Icons.notifications,
                   onPressed: () {
@@ -99,6 +104,7 @@ class AccountInfoPage extends StatelessWidget {
 
                 // Terms & Conditions Button
                 buildButton(
+                  context: context,
                   label: 'Terms & Conditions',
                   icon: Icons.article,
                   onPressed: () {
@@ -112,6 +118,7 @@ class AccountInfoPage extends StatelessWidget {
 
                 // Settings Button
                 buildButton(
+                  context: context,
                   label: 'Settings',
                   icon: Icons.settings,
                   onPressed: () {
@@ -124,6 +131,7 @@ class AccountInfoPage extends StatelessWidget {
 
                 // Rate Us Button
                 buildButton(
+                  context: context,
                   label: 'Rate Us',
                   icon: Icons.star_rate,
                   onPressed: () {
@@ -133,6 +141,7 @@ class AccountInfoPage extends StatelessWidget {
 
                 // Share with Friends Button
                 buildButton(
+                  context: context,
                   label: 'Share with Friends',
                   icon: Icons.share,
                   onPressed: () {
@@ -148,10 +157,10 @@ class AccountInfoPage extends StatelessWidget {
   }
 
   // Helper Method to Create Each Button
-  // Helper Method to Create Each Button
   Widget buildButton({
     required String label,
     required IconData icon,
+    BuildContext? context,
     Function()? onPressed,
   }) {
     return Padding(
@@ -165,7 +174,6 @@ class AccountInfoPage extends StatelessWidget {
             color: Color(0xFFF5F5F3),
             borderRadius: BorderRadius.circular(10), // Reduced border radius
             border: Border.all(
-              // Outline border
               color: Colors.purple.withOpacity(0.5),
               width: 1.5,
             ),
@@ -183,16 +191,14 @@ class AccountInfoPage extends StatelessWidget {
               SizedBox(width: 20),
               Text(
                 label,
-                style: const TextStyle(
-                  fontFamily: 'Belleza',
-                  fontSize: 22,
-                  color: Colors.deepPurple,
-                ),
+                style: Theme.of(context!).textTheme.bodyLarge?.copyWith(
+                      fontSize: 22,
+                      color: Colors.deepPurple,
+                    ),
               ),
               Spacer(),
               Padding(
-                padding:
-                    const EdgeInsets.only(right: 20), // Added right padding
+                padding: const EdgeInsets.only(right: 20),
                 child: Icon(
                   icon,
                   size: 35,
@@ -212,7 +218,6 @@ class AccountInfoPage extends StatelessWidget {
 
   void _rateUs() {
     // This would open the app store or play store link for rating the app
-    // Replace '[Insert App Store Link]' with your app store link
     print('Redirecting to App Store/Play Store...');
   }
 
@@ -289,14 +294,43 @@ class _SetNotificationsPageState extends State<SetNotificationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notification Settings'),
+        title: Consumer<FontProvider>(
+          builder: (context, fontProvider, child) {
+            return Text(
+              'Notification Settings',
+              style: GoogleFonts.getFont(
+                fontProvider.currentFont,
+                fontSize: 20,
+                fontWeight: FontWeight.bold, // Or any other style you prefer
+              ),
+            );
+          },
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             SwitchListTile(
-              title: Text('Enable Notifications'),
+              title: Consumer<FontProvider>(
+                builder: (context, fontProvider, child) {
+                  return Text(
+                    'Enable Notifications',
+                    style: GoogleFonts.getFont(
+                      fontProvider.currentFont,
+                      fontSize: 18,
+                    ),
+                  );
+                },
+              ),
               value: _notificationsEnabled,
               onChanged: (bool value) {
                 setState(() {
@@ -314,7 +348,17 @@ class _SetNotificationsPageState extends State<SetNotificationsPage> {
                 );
                 Navigator.of(context).pop(); // Go back after saving
               },
-              child: Text('Save Settings'),
+              child: Consumer<FontProvider>(
+                builder: (context, fontProvider, child) {
+                  return Text(
+                    'Save Settings',
+                    style: GoogleFonts.getFont(
+                      fontProvider.currentFont,
+                      fontSize: 18,
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -328,13 +372,38 @@ class TermsConditionsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Terms and Conditions'),
+        title: Consumer<FontProvider>(
+          builder: (context, fontProvider, child) {
+            return Text(
+              'Terms and Conditions',
+              style: GoogleFonts.getFont(
+                fontProvider.currentFont,
+                fontSize: 20,
+                fontWeight:
+                    FontWeight.bold, // You can adjust the style as needed
+              ),
+            );
+          },
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text(
-          'These are the terms and conditions for using this app. By using this app, you agree to all the terms stated here. [Insert detailed text here].',
-          style: TextStyle(fontSize: 16),
+        child: Consumer<FontProvider>(
+          builder: (context, fontProvider, child) {
+            return Text(
+              'These are the terms and conditions for using this app. By using this app, you agree to all the terms stated here. [Insert detailed text here].',
+              style: GoogleFonts.getFont(
+                fontProvider.currentFont,
+                fontSize: 16,
+              ),
+            );
+          },
         ),
       ),
     );
@@ -353,7 +422,25 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Consumer<FontProvider>(
+          builder: (context, fontProvider, child) {
+            return Text(
+              'Settings',
+              style: GoogleFonts.getFont(
+                fontProvider.currentFont,
+                fontSize: 20,
+                fontWeight:
+                    FontWeight.bold, // You can adjust the style as needed
+              ),
+            );
+          },
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -365,21 +452,76 @@ class _SettingsPageState extends State<SettingsPage> {
               onChanged: (bool value) {
                 setState(() {
                   _isDarkMode = value;
+                  // Update the theme based on dark mode setting
                   Provider.of<ThemeProvider>(context, listen: false)
                       .toggleTheme();
                 });
               },
             ),
             ListTile(
-              title: Text('Fonts'),
+              title: Text('Change Font'),
               trailing: Icon(Icons.font_download),
               onTap: () {
-                // Handle font changes
+                // Show a dialog to select a font
+                _showFontDialog(context);
               },
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // Dialog to select a font
+  void _showFontDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Font'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text('Roboto'),
+                onTap: () {
+                  Provider.of<FontProvider>(context, listen: false)
+                      .setFont('Roboto');
+
+//show snakbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Font changed to Roboto')),
+                  );
+
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Lato'),
+                onTap: () {
+                  Provider.of<FontProvider>(context, listen: false)
+                      .setFont('Lato');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Font changed to Lato')),
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text('Poppins'),
+                onTap: () {
+                  Provider.of<FontProvider>(context, listen: false)
+                      .setFont('Poppins');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Font changed to Poppins')),
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

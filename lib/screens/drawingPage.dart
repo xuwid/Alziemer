@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'dart:ui' as ui;
-import 'package:flutter/rendering.dart ';
+import 'package:flutter/rendering.dart';
 import 'dart:typed_data';
+import 'package:provider/provider.dart';
+import 'package:alzimerapp/provider/fontprovider.dart'; // Import your FontProvider
 
 class DrawingTestPage extends StatefulWidget {
   @override
@@ -28,9 +30,25 @@ class _DrawingTestPageState extends State<DrawingTestPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Access the FontProvider to get the current selected font
+    String currentFont = Provider.of<FontProvider>(context).currentFont;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Drawing Test'),
+        title: Text(
+          'Drawing Test',
+          style: TextStyle(fontFamily: currentFont), // Apply the selected font
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          padding: EdgeInsets.all(16),
+          iconSize: 36,
+          splashRadius: 24,
+        ),
       ),
       body: Column(
         children: [
@@ -38,7 +56,9 @@ class _DrawingTestPageState extends State<DrawingTestPage> {
           // Display the icon to be drawn
           Text(
             'Draw the following icon:',
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(
+                fontSize: 20,
+                fontFamily: currentFont), // Apply the selected font
           ),
           SizedBox(height: 10),
           Icon(
@@ -84,7 +104,11 @@ class _DrawingTestPageState extends State<DrawingTestPage> {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: Text('Pick a color'),
+                      title: Text(
+                        'Pick a color',
+                        style: TextStyle(
+                            fontFamily: currentFont), // Apply the selected font
+                      ),
                       content: BlockPicker(
                         pickerColor: _selectedColor,
                         onColorChanged: (color) {
@@ -95,7 +119,12 @@ class _DrawingTestPageState extends State<DrawingTestPage> {
                       ),
                       actions: [
                         TextButton(
-                          child: Text('Close'),
+                          child: Text(
+                            'Close',
+                            style: TextStyle(
+                                fontFamily:
+                                    currentFont), // Apply the selected font
+                          ),
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                       ],
@@ -138,11 +167,19 @@ class _DrawingTestPageState extends State<DrawingTestPage> {
 
               if (isMatch) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Drawing matches the icon!"),
+                  content: Text(
+                    "Drawing matches the icon!",
+                    style: TextStyle(
+                        fontFamily: currentFont), // Apply the selected font
+                  ),
                 ));
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Drawing does not match the icon."),
+                  content: Text(
+                    "Drawing does not match the icon.",
+                    style: TextStyle(
+                        fontFamily: currentFont), // Apply the selected font
+                  ),
                 ));
               }
 
@@ -155,7 +192,11 @@ class _DrawingTestPageState extends State<DrawingTestPage> {
                 }
               });
             },
-            child: Text('Submit Drawing'),
+            child: Text(
+              'Submit Drawing',
+              style:
+                  TextStyle(fontFamily: currentFont), // Apply the selected font
+            ),
           ),
           SizedBox(height: 20),
         ],
@@ -219,14 +260,29 @@ class _DrawingTestPageState extends State<DrawingTestPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Test Completed'),
-        content: Text('You have completed all drawing tasks!'),
+        title: Text(
+          'Test Completed',
+          style: TextStyle(
+              fontFamily: Provider.of<FontProvider>(context)
+                  .currentFont), // Apply the selected font
+        ),
+        content: Text(
+          'You have completed all drawing tasks!',
+          style: TextStyle(
+              fontFamily: Provider.of<FontProvider>(context)
+                  .currentFont), // Apply the selected font
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text('OK'),
+            child: Text(
+              'OK',
+              style: TextStyle(
+                  fontFamily: Provider.of<FontProvider>(context)
+                      .currentFont), // Apply the selected font
+            ),
           ),
         ],
       ),
@@ -242,29 +298,22 @@ class DrawingPoint {
 }
 
 class DrawingPainter extends CustomPainter {
-  List<DrawingPoint?> pointsList;
+  List<DrawingPoint?> points;
 
-  DrawingPainter(this.pointsList);
+  DrawingPainter(this.points);
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (int i = 0; i < pointsList.length - 1; i++) {
-      if (pointsList[i] != null && pointsList[i + 1] != null) {
-        canvas.drawLine(pointsList[i]!.points, pointsList[i + 1]!.points,
-            pointsList[i]!.paint);
-      } else if (pointsList[i] != null && pointsList[i + 1] == null) {
-        canvas.drawPoints(
-            ui.PointMode.points, [pointsList[i]!.points], pointsList[i]!.paint);
+    for (var point in points) {
+      if (point != null) {
+        canvas.drawCircle(
+            point.points, point.paint.strokeWidth / 2, point.paint);
       }
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+  bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
   }
-}
-
-void main() {
-  runApp(MaterialApp(home: DrawingTestPage()));
 }

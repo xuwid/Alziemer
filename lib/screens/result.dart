@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:alzimerapp/provider/fontprovider.dart'; // Import FontProvider
 
 class ResultPage extends StatefulWidget {
   @override
@@ -29,6 +32,9 @@ class _ResultPageState extends State<ResultPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the current font from FontProvider
+    final fontProvider = Provider.of<FontProvider>(context);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -41,30 +47,26 @@ class _ResultPageState extends State<ResultPage> {
                 SizedBox(height: 20),
 
                 // Test Summary Section
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    border: Border.all(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text(
                         'Test Summary',
-                        style: TextStyle(
+                        style: GoogleFonts.getFont(fontProvider.currentFont)
+                            .copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 22,
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        'This section provides a brief overview of your previous cognitive test results. It can include the total number of tests completed, average scores, and progress over time.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'This section provides a brief overview of your previous cognitive test results. It can include the total number of tests completed, average scores, and progress over time.',
+                      style: GoogleFonts.getFont(fontProvider.currentFont)
+                          .copyWith(fontSize: 16),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
 
@@ -80,7 +82,8 @@ class _ResultPageState extends State<ResultPage> {
                   child: Center(
                     child: Text(
                       'Graphical Representation (e.g., Progress Over Time)',
-                      style: TextStyle(fontSize: 18, color: Colors.blue),
+                      style: GoogleFonts.getFont(fontProvider.currentFont)
+                          .copyWith(fontSize: 18, color: Colors.blue),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -100,7 +103,8 @@ class _ResultPageState extends State<ResultPage> {
                     children: [
                       Text(
                         'Prediction',
-                        style: TextStyle(
+                        style: GoogleFonts.getFont(fontProvider.currentFont)
+                            .copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
@@ -108,20 +112,16 @@ class _ResultPageState extends State<ResultPage> {
                       SizedBox(height: 10),
                       Text(
                         'Combine result of all games',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
+                        style: GoogleFonts.getFont(fontProvider.currentFont)
+                            .copyWith(fontSize: 16),
                       ),
-
                       SizedBox(height: 20),
                       // Display the generated report
                       if (report.isNotEmpty)
-
-                        //Display combined result of all games
-
                         Text(
                           'Combined result of all games:',
-                          style: TextStyle(
+                          style: GoogleFonts.getFont(fontProvider.currentFont)
+                              .copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.purple,
@@ -132,7 +132,8 @@ class _ResultPageState extends State<ResultPage> {
                       Text('Scrooping Test: 1.2'),
                       Text(
                         'Report: $report',
-                        style: TextStyle(
+                        style: GoogleFonts.getFont(fontProvider.currentFont)
+                            .copyWith(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.blue,
@@ -156,7 +157,8 @@ class _ResultPageState extends State<ResultPage> {
                     children: [
                       Text(
                         'Detailed Insights',
-                        style: TextStyle(
+                        style: GoogleFonts.getFont(fontProvider.currentFont)
+                            .copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
@@ -164,7 +166,8 @@ class _ResultPageState extends State<ResultPage> {
                       SizedBox(height: 10),
                       Text(
                         'Based on your results, here are some personalized recommendations and insights to help improve cognitive performance over time. For example, suggestions on specific exercises or cognitive activities.',
-                        style: TextStyle(fontSize: 16),
+                        style: GoogleFonts.getFont(fontProvider.currentFont)
+                            .copyWith(fontSize: 16),
                       ),
                     ],
                   ),
@@ -178,7 +181,8 @@ class _ResultPageState extends State<ResultPage> {
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: Text(
                       'Generate Prediction & Stage',
-                      style: TextStyle(fontSize: 18),
+                      style: GoogleFonts.getFont(fontProvider.currentFont)
+                          .copyWith(fontSize: 18),
                     ),
                   ),
                   style: ElevatedButton.styleFrom(

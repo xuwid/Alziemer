@@ -19,7 +19,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Screen'),
+        title:
+            Text('Home Screen', style: Theme.of(context).textTheme.bodyLarge),
       ),
       body: Center(
         child: ElevatedButton(
@@ -29,7 +30,8 @@ class HomeScreen extends StatelessWidget {
               MaterialPageRoute(builder: (context) => StroopTestPage()),
             );
           },
-          child: Text('Start Stroop Test'),
+          child: Text('Start Stroop Test',
+              style: Theme.of(context).textTheme.bodyMedium),
         ),
       ),
     );
@@ -125,10 +127,12 @@ class _StroopTestPageState extends State<StroopTestPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Results'),
+          title:
+              Text('Results', style: Theme.of(context).textTheme.headlineSmall),
           content: Text(
             'Correct Responses: $correctResponses/$totalTrials\n'
             'Average Response Time: ${averageTime ~/ 1000}.${(averageTime % 1000) ~/ 10} seconds',
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           actions: [
             TextButton(
@@ -137,7 +141,8 @@ class _StroopTestPageState extends State<StroopTestPage> {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-              child: Text('Back to Home'),
+              child: Text('Back to Home',
+                  style: Theme.of(context).textTheme.bodyMedium),
             ),
           ],
         );
@@ -166,6 +171,20 @@ class _StroopTestPageState extends State<StroopTestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          padding: EdgeInsets.all(16),
+          iconSize: 36,
+          splashRadius: 24,
+        ),
+        title: Text('Stroop Test',
+            style: Theme.of(context).textTheme.headlineSmall),
+        centerTitle: true,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -186,10 +205,7 @@ class _StroopTestPageState extends State<StroopTestPage> {
                     children: [
                       Text(
                         'Are you ready?',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.black,
-                        ),
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       SizedBox(height: 20),
                       // Explanation of the test
@@ -198,7 +214,7 @@ class _StroopTestPageState extends State<StroopTestPage> {
                         '\nYour task is to choose the color of the text, not the word itself.\n\n'
                         'For example, if the word "Red" is shown in blue color, you should tap on the blue button.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
@@ -211,8 +227,8 @@ class _StroopTestPageState extends State<StroopTestPage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child:
-                            Text('Start Test', style: TextStyle(fontSize: 20)),
+                        child: Text('Start Test',
+                            style: Theme.of(context).textTheme.bodyMedium),
                       ),
                     ],
                   ),
@@ -221,7 +237,7 @@ class _StroopTestPageState extends State<StroopTestPage> {
                 // Displayed word in mismatched color
                 Text(
                   'Choose the Color',
-                  style: TextStyle(fontSize: 20, color: Colors.black),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 SizedBox(height: 20),
                 Container(
@@ -276,7 +292,7 @@ class _StroopTestPageState extends State<StroopTestPage> {
                 ),
                 SizedBox(height: 20),
                 Text('Trial $currentTrial of $totalTrials',
-                    style: TextStyle(color: Colors.black)),
+                    style: Theme.of(context).textTheme.bodyMedium),
               ],
             ],
           ),

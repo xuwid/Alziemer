@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:alzimerapp/provider/fontprovider.dart';
+import 'package:provider/provider.dart'; // Add provider import for accessing FontProvider
 
 class MRIPage extends StatefulWidget {
   @override
@@ -45,12 +47,31 @@ class _MRIPageState extends State<MRIPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the selected font from FontProvider
+    final fontProvider = Provider.of<FontProvider>(context);
+
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon:
+                const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            padding: EdgeInsets.all(16),
+            iconSize: 36,
+            splashRadius: 24,
+          ),
+          title: Text(
+            "MRI Upload",
+            style: TextStyle(fontFamily: fontProvider.currentFont),
+          ),
+        ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -61,6 +82,7 @@ class _MRIPageState extends State<MRIPage> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  fontFamily: fontProvider.currentFont, // Dynamically set font
                 ),
               ),
               SizedBox(height: 20),
@@ -86,7 +108,12 @@ class _MRIPageState extends State<MRIPage> {
               ElevatedButton.icon(
                 onPressed: _pickImageFromGallery,
                 icon: Icon(Icons.upload_file),
-                label: Text('Upload MRI Scan'),
+                label: Text(
+                  'Upload MRI Scan',
+                  style: TextStyle(
+                      fontFamily:
+                          fontProvider.currentFont), // Dynamically set font
+                ),
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 50),
                   backgroundColor: Theme.of(context).colorScheme.background,
@@ -108,7 +135,12 @@ class _MRIPageState extends State<MRIPage> {
                   }
                 },
                 icon: Icon(Icons.camera_alt),
-                label: Text('Take Picture of MRI Scan'),
+                label: Text(
+                  'Take Picture of MRI Scan',
+                  style: TextStyle(
+                      fontFamily:
+                          fontProvider.currentFont), // Dynamically set font
+                ),
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 50),
                   backgroundColor: Theme.of(context).colorScheme.background,
@@ -123,21 +155,19 @@ class _MRIPageState extends State<MRIPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Image saved successfully!')),
                     );
-                    Navigator.pop(context);
                     // Code to save the image would go here
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('No image selected!')),
                     );
                   }
-                  Navigator.pop(context);
-                  //Pop to Home Screen
+
+                  // Pop to Home Screen
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white, // Background color
                   side: BorderSide(color: Colors.purple),
                   elevation: 5,
-
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -145,11 +175,13 @@ class _MRIPageState extends State<MRIPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Text(
-                    'Sumbit',
+                    'Submit',
                     style: TextStyle(
                       color: Colors.purple,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      fontFamily:
+                          fontProvider.currentFont, // Dynamically set font
                     ),
                   ),
                 ),

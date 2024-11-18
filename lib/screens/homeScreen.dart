@@ -4,6 +4,9 @@ import 'package:alzimerapp/screens/mriScan.dart';
 import 'package:alzimerapp/screens/report.dart.dart';
 import 'package:alzimerapp/screens/result.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // Import provider for FontProvider
+import 'package:google_fonts/google_fonts.dart'; // For font styling
+import 'package:alzimerapp/provider/fontprovider.dart'; // Import FontProvider
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -61,6 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
 class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Consume the FontProvider to get the selected font
+    final fontProvider = Provider.of<FontProvider>(context);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -85,7 +91,7 @@ class HomeTab extends StatelessWidget {
               padding: const EdgeInsets.all(20.0),
               child: Text(
                 'MRI SCAN',
-                style: TextStyle(
+                style: GoogleFonts.getFont(fontProvider.currentFont).copyWith(
                   color: Colors.purple,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -96,7 +102,7 @@ class HomeTab extends StatelessWidget {
           SizedBox(height: 20),
           Text(
             'OR',
-            style: TextStyle(
+            style: GoogleFonts.getFont(fontProvider.currentFont).copyWith(
               fontSize: 24,
               color: Colors.purple,
               fontWeight: FontWeight.bold,
@@ -123,7 +129,7 @@ class HomeTab extends StatelessWidget {
               padding: const EdgeInsets.all(20.0),
               child: Text(
                 'MIND GAMES',
-                style: TextStyle(
+                style: GoogleFonts.getFont(fontProvider.currentFont).copyWith(
                   color: Colors.purple,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
