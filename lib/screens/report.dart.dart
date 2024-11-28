@@ -21,6 +21,7 @@ class ReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 248, 234, 247),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

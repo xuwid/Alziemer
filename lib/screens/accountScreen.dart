@@ -1,158 +1,218 @@
+import 'dart:io'; // For File class
+import 'package:alzimerapp/screens/Start.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart'; // Import share package
 import 'package:provider/provider.dart';
 import 'package:alzimerapp/provider/provider.dart'; // Import the theme provider
 import 'package:google_fonts/google_fonts.dart';
 import 'package:alzimerapp/provider/fontprovider.dart'; // Import the FontProvider
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore package
+
+import 'package:alzimerapp/screens/loginScreen.dart'; // Import LoginScreen
+import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth package
 
 class AccountInfoPage extends StatelessWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance; // FirebaseAuth instance
+  final FirebaseFirestore _firestore =
+      FirebaseFirestore.instance; // Firestore instance
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+    return FutureBuilder<DocumentSnapshot>(
+      future: _firestore.collection('users').doc(_auth.currentUser?.uid).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return Center(child: Text('No user data found.'));
+        }
+
+        var userData = snapshot.data!;
+        String? profilePicture = userData['profile_picture'];
+
+        return Scaffold(
+          backgroundColor: const Color.fromARGB(255, 248, 234, 247),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Color(0xFFEADDFF),
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Color(0xFF4F378A),
-                        child:
-                            Icon(Icons.person, size: 50, color: Colors.white),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Color(0xFFEADDFF),
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Color(0xFF4F378A),
+                            // Check if the profile picture is a network URL or local file path
+                            backgroundImage: profilePicture != null
+                                ? (profilePicture.startsWith('http') ||
+                                        profilePicture.startsWith('https'))
+                                    ? NetworkImage(
+                                        profilePicture) // Use NetworkImage if URL
+                                    : FileImage(File(
+                                        profilePicture)) // Use FileImage if local path
+                                : null,
+                            child: profilePicture == null
+                                ? Icon(Icons.person,
+                                    size: 50, color: Colors.white)
+                                : null,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    '${userData['name']}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                          fontSize: 18,
+                                          color: Color(0xFF26093F),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                  ),
+                                  Spacer(),
+                                  PopupMenuButton<String>(
+                                    icon: Icon(Icons.more_vert),
+                                    onSelected: (value) {
+                                      if (value == 'delete') {
+                                        _showDeleteConfirmationDialog(context);
+                                      } else if (value == 'logout') {
+                                        _showLogoutConfirmationDialog(context);
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) {
+                                      return [
+                                        PopupMenuItem<String>(
+                                          value: 'delete',
+                                          child: Text('Delete Account'),
+                                        ),
+                                        PopupMenuItem<String>(
+                                          value: 'logout',
+                                          child: Text('Log Out'),
+                                        ),
+                                      ];
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
                               Text(
-                                'Name',
+                                '${userData['email']}',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge
                                     ?.copyWith(
-                                      fontSize: 20,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
                                       color: Color(0xFF26093F),
                                     ),
-                              ),
-                              Spacer(),
-                              PopupMenuButton<String>(
-                                icon: Icon(Icons.more_vert),
-                                onSelected: (value) {
-                                  if (value == 'delete') {
-                                    _showDeleteConfirmationDialog(context);
-                                  } else if (value == 'logout') {
-                                    _showLogoutConfirmationDialog(context);
-                                  }
-                                },
-                                itemBuilder: (BuildContext context) {
-                                  return [
-                                    PopupMenuItem<String>(
-                                      value: 'delete',
-                                      child: Text('Delete Account'),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: 'logout',
-                                      child: Text('Log Out'),
-                                    ),
-                                  ];
-                                },
                               ),
                             ],
                           ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Email Address',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontSize: 20,
-                                      color: Color(0xFF26093F),
-                                    ),
-                          ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 40),
+
+                    // If user is not logged in, show login button
+                    if (_auth.currentUser == null)
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()),
+                          );
+                        },
+                        child: Text('Login'),
                       ),
+
+                    // Set Notifications Button
+                    buildButton(
+                      context: context,
+                      label: 'Set Notifications',
+                      icon: Icons.notifications,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SetNotificationsPage()),
+                        );
+                      },
+                    ),
+
+                    // Terms & Conditions Button
+                    buildButton(
+                      context: context,
+                      label: 'Terms & Conditions',
+                      icon: Icons.article,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TermsConditionsPage()),
+                        );
+                      },
+                    ),
+
+                    // Settings Button
+                    buildButton(
+                      context: context,
+                      label: 'Settings',
+                      icon: Icons.settings,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsPage()),
+                        );
+                      },
+                    ),
+
+                    // Rate Us Button
+                    buildButton(
+                      context: context,
+                      label: 'Rate Us',
+                      icon: Icons.star_rate,
+                      onPressed: () {
+                        _rateUs();
+                      },
+                    ),
+
+                    // Share with Friends Button
+                    buildButton(
+                      context: context,
+                      label: 'Share with Friends',
+                      icon: Icons.share,
+                      onPressed: () {
+                        _shareApp();
+                      },
                     ),
                   ],
                 ),
-                SizedBox(height: 40),
-
-                // Set Notifications Button
-                buildButton(
-                  context: context,
-                  label: 'Set Notifications',
-                  icon: Icons.notifications,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SetNotificationsPage()),
-                    );
-                  },
-                ),
-
-                // Terms & Conditions Button
-                buildButton(
-                  context: context,
-                  label: 'Terms & Conditions',
-                  icon: Icons.article,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TermsConditionsPage()),
-                    );
-                  },
-                ),
-
-                // Settings Button
-                buildButton(
-                  context: context,
-                  label: 'Settings',
-                  icon: Icons.settings,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SettingsPage()),
-                    );
-                  },
-                ),
-
-                // Rate Us Button
-                buildButton(
-                  context: context,
-                  label: 'Rate Us',
-                  icon: Icons.star_rate,
-                  onPressed: () {
-                    _rateUs();
-                  },
-                ),
-
-                // Share with Friends Button
-                buildButton(
-                  context: context,
-                  label: 'Share with Friends',
-                  icon: Icons.share,
-                  onPressed: () {
-                    _shareApp();
-                  },
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -163,7 +223,7 @@ class AccountInfoPage extends StatelessWidget {
     BuildContext? context,
     Function()? onPressed,
   }) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: InkWell(
         onTap: onPressed,
@@ -237,12 +297,25 @@ class AccountInfoPage extends StatelessWidget {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                // Handle account deletion logic here
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Account deleted')),
-                );
+              onPressed: () async {
+                try {
+                  await _auth.currentUser
+                      ?.delete(); // Delete user from Firebase
+                  Navigator.of(context).pop(); // Close the dialog
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Account deleted')),
+                  );
+
+                  // Navigate to start page (SplashScreen or LoginPage)
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => StartPage()),
+                    (Route<dynamic> route) => false,
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to delete account: $e')),
+                  );
+                }
               },
               child: Text('Delete'),
             ),
@@ -267,10 +340,17 @@ class AccountInfoPage extends StatelessWidget {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
+              onPressed: () async {
+                await _auth.signOut(); // Sign out the user
+                Navigator.of(context).pop(); // Close the dialog
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Logged out')),
+                );
+
+                // Navigate to start page (SplashScreen or LoginPage)
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => StartPage()),
+                  (Route<dynamic> route) => false,
                 );
               },
               child: Text('Log Out'),
@@ -306,6 +386,7 @@ class _SetNotificationsPageState extends State<SetNotificationsPage> {
             );
           },
         ),
+        backgroundColor: const Color.fromARGB(255, 248, 234, 247),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
@@ -315,6 +396,7 @@ class _SetNotificationsPageState extends State<SetNotificationsPage> {
           },
         ),
       ),
+      backgroundColor: const Color.fromARGB(255, 248, 234, 247),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -385,6 +467,7 @@ class TermsConditionsPage extends StatelessWidget {
             );
           },
         ),
+        backgroundColor: const Color.fromARGB(255, 248, 234, 247),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -392,6 +475,7 @@ class TermsConditionsPage extends StatelessWidget {
           },
         ),
       ),
+      backgroundColor: const Color.fromARGB(255, 248, 234, 247),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Consumer<FontProvider>(
@@ -435,6 +519,7 @@ class _SettingsPageState extends State<SettingsPage> {
             );
           },
         ),
+        backgroundColor: const Color.fromARGB(255, 248, 234, 247),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -442,6 +527,7 @@ class _SettingsPageState extends State<SettingsPage> {
           },
         ),
       ),
+      backgroundColor: const Color.fromARGB(255, 248, 234, 247),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

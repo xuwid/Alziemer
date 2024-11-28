@@ -27,8 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 248, 234, 247),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 248, 234, 247),
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -67,77 +69,80 @@ class HomeTab extends StatelessWidget {
     // Consume the FontProvider to get the selected font
     final fontProvider = Provider.of<FontProvider>(context);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              // Handle MRI Scan button press
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MRIPage()),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white, // Background color
-              side: BorderSide(color: Colors.purple),
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 248, 234, 247),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // Handle MRI Scan button press
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MRIPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white, // Background color
+                side: BorderSide(color: Colors.purple),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'MRI SCAN',
-                style: GoogleFonts.getFont(fontProvider.currentFont).copyWith(
-                  color: Colors.purple,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  'MRI SCAN',
+                  style: GoogleFonts.getFont(fontProvider.currentFont).copyWith(
+                    color: Colors.purple,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'OR',
-            style: GoogleFonts.getFont(fontProvider.currentFont).copyWith(
-              fontSize: 24,
-              color: Colors.purple,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              // Handle Mind Games button press
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MindGamesPage()),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white, // Background color
-              side: BorderSide(color: Colors.purple),
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+            SizedBox(height: 20),
+            Text(
+              'OR',
+              style: GoogleFonts.getFont(fontProvider.currentFont).copyWith(
+                fontSize: 24,
+                color: Colors.purple,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'MIND GAMES',
-                style: GoogleFonts.getFont(fontProvider.currentFont).copyWith(
-                  color: Colors.purple,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Handle Mind Games button press
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MindGamesPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white, // Background color
+                side: BorderSide(color: Colors.purple),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  'MIND GAMES',
+                  style: GoogleFonts.getFont(fontProvider.currentFont).copyWith(
+                    color: Colors.purple,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

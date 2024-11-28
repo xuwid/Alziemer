@@ -71,7 +71,9 @@ class _MRIPageState extends State<MRIPage> {
             "MRI Upload",
             style: TextStyle(fontFamily: fontProvider.currentFont),
           ),
+          backgroundColor: const Color.fromARGB(255, 248, 234, 247),
         ),
+        backgroundColor: const Color.fromARGB(255, 248, 234, 247),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

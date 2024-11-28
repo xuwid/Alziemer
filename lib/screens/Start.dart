@@ -51,6 +51,7 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 248, 234, 247),
       body: Column(
         children: [
           // Top section: PageView that takes 60% of the screen height

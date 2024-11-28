@@ -4,8 +4,10 @@ import 'package:alzimerapp/screens/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:alzimerapp/provider/fontprovider.dart'; // Import FontProvider
+import 'package:provider/provider.dart';
 
 class Registerscreen extends StatefulWidget {
   @override
@@ -13,7 +15,14 @@ class Registerscreen extends StatefulWidget {
 }
 
 class _RegisterscreenState extends State<Registerscreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   File? _selectedImage; // Store the selected image
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _ageController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   // Method to check permissions and pick image
   Future<void> _pickImage(ImageSource source) async {
@@ -58,12 +67,44 @@ class _RegisterscreenState extends State<Registerscreen> {
     );
   }
 
+  // Method to register user and store data in Firestore
+  Future<void> _registerUser() async {
+    try {
+      // Register user using Firebase Auth
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // Store additional user data in Firestore
+      await _firestore.collection('users').doc(userCredential.user?.uid).set({
+        'name': _nameController.text.trim(),
+        'age': _ageController.text.trim(),
+        'email': _emailController.text.trim(),
+        'profile_picture': _selectedImage != null ? _selectedImage!.path : null,
+      });
+
+      // After successful registration, navigate to HomeScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error registering: $e")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<FontProvider>(
       builder: (context, fontProvider, child) {
         return Scaffold(
           appBar: AppBar(
+            forceMaterialTransparency: true,
+            backgroundColor: Colors.transparent,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios,
                   color: Colors.black, size: 20),
@@ -76,6 +117,7 @@ class _RegisterscreenState extends State<Registerscreen> {
             ),
             automaticallyImplyLeading: false,
           ),
+          backgroundColor: const Color.fromARGB(255, 248, 234, 247),
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
@@ -87,8 +129,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                       child: Text(
                         'Register',
                         style: TextStyle(
-                          fontFamily: fontProvider
-                              .currentFont, // Apply font dynamically
+                          fontFamily: fontProvider.currentFont,
                           color: Colors.purple,
                           fontSize: 32,
                         ),
@@ -98,59 +139,28 @@ class _RegisterscreenState extends State<Registerscreen> {
                     Text(
                       'Glad to have you here',
                       style: TextStyle(
-                        fontFamily:
-                            fontProvider.currentFont, // Apply font dynamically
+                        fontFamily: fontProvider.currentFont,
                         color: Colors.black,
                         fontSize: 18,
                       ),
                     ),
                     const SizedBox(height: 30),
-                    _buildTextField('Name', fontProvider),
+                    _buildTextField('Name', fontProvider, _nameController),
                     const SizedBox(height: 20),
-                    _buildTextField('Age', fontProvider),
+                    _buildTextField('Age', fontProvider, _ageController),
                     const SizedBox(height: 20),
-
-                    // Updated Select Picture button
                     _buildSelectPictureButton(fontProvider),
-
                     const SizedBox(height: 20),
-                    _buildTextField('Email address', fontProvider),
+                    _buildTextField(
+                        'Email address', fontProvider, _emailController),
                     const SizedBox(height: 20),
-                    _buildTextField('Password', fontProvider),
+                    _buildTextField(
+                        'Password', fontProvider, _passwordController),
                     const SizedBox(height: 30),
-
-                    Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            'Or register with',
-                            style: TextStyle(
-                              fontFamily: fontProvider
-                                  .currentFont, // Apply font dynamically
-                              color: Colors.purple,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _buildSocialIcon('lib/assets/google.jpg'),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen()),
-                          );
-                        },
+                        onPressed: _registerUser,
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
@@ -176,7 +186,6 @@ class _RegisterscreenState extends State<Registerscreen> {
     );
   }
 
-  // Button for selecting a picture
   Widget _buildSelectPictureButton(FontProvider fontProvider) {
     return Card(
       elevation: 20,
@@ -192,10 +201,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                     leading: const Icon(Icons.camera_alt),
                     title: Text(
                       'Take a photo',
-                      style: TextStyle(
-                        fontFamily:
-                            fontProvider.currentFont, // Apply font dynamically
-                      ),
+                      style: TextStyle(fontFamily: fontProvider.currentFont),
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -206,10 +212,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                     leading: const Icon(Icons.photo),
                     title: Text(
                       'Choose from gallery',
-                      style: TextStyle(
-                        fontFamily:
-                            fontProvider.currentFont, // Apply font dynamically
-                      ),
+                      style: TextStyle(fontFamily: fontProvider.currentFont),
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -230,8 +233,7 @@ class _RegisterscreenState extends State<Registerscreen> {
               Text(
                 'Select picture',
                 style: TextStyle(
-                  fontFamily:
-                      fontProvider.currentFont, // Apply font dynamically
+                  fontFamily: fontProvider.currentFont,
                   color: Colors.grey,
                 ),
               ),
@@ -248,14 +250,16 @@ class _RegisterscreenState extends State<Registerscreen> {
     );
   }
 
-  Widget _buildTextField(String hintText, FontProvider fontProvider) {
+  Widget _buildTextField(String hintText, FontProvider fontProvider,
+      TextEditingController controller) {
     return Card(
       elevation: 20,
       child: TextField(
+        controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
-            fontFamily: fontProvider.currentFont, // Apply font dynamically
+            fontFamily: fontProvider.currentFont,
             color: Colors.grey,
           ),
           filled: true,
@@ -265,20 +269,6 @@ class _RegisterscreenState extends State<Registerscreen> {
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSocialIcon(String assetPath) {
-    return Container(
-      height: 50,
-      width: 50,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        image: DecorationImage(
-          image: AssetImage(assetPath),
-          fit: BoxFit.cover,
         ),
       ),
     );

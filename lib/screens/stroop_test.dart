@@ -184,7 +184,9 @@ class _StroopTestPageState extends State<StroopTestPage> {
         title: Text('Stroop Test',
             style: Theme.of(context).textTheme.headlineSmall),
         centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 248, 234, 247),
       ),
+      backgroundColor: const Color.fromARGB(255, 248, 234, 247),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

@@ -39,6 +39,7 @@ class _DrawingTestPageState extends State<DrawingTestPage> {
           'Drawing Test',
           style: TextStyle(fontFamily: currentFont), // Apply the selected font
         ),
+        backgroundColor: const Color.fromARGB(255, 248, 234, 247),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
@@ -50,6 +51,7 @@ class _DrawingTestPageState extends State<DrawingTestPage> {
           splashRadius: 24,
         ),
       ),
+      backgroundColor: const Color.fromARGB(255, 248, 234, 247),
       body: Column(
         children: [
           SizedBox(height: 20),

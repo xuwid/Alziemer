@@ -1,18 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:alzimerapp/screens/Start.dart'; // Your start page
-import 'package:alzimerapp/provider/provider.dart'; // Your theme provider
-import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts package
-import 'package:alzimerapp/provider/fontprovider.dart'; // Import the FontProvider
+import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
+import 'package:alzimerapp/provider/fontprovider.dart'; // Import FontProvider
+import 'package:alzimerapp/provider/provider.dart'; // Import ThemeProvider
+import 'package:alzimerapp/screens/SplashScreen.dart'; // Import SplashScreen
+import 'package:alzimerapp/screens/homeScreen.dart'; // Import HomeScreen
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
+import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
+import 'firebase_options.dart'; // Import DefaultFirebaseOptions
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (_) => ThemeProvider()), // Your theme provider
+          create: (_) => ThemeProvider(), // Your theme provider
+        ),
         ChangeNotifierProvider(
-            create: (_) => FontProvider()), // Provide FontProvider
+          create: (_) => FontProvider(), // Your font provider
+        ),
       ],
       child: const MyApp(),
     ),
@@ -31,7 +41,6 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             // Apply the selected font dynamically using GoogleFonts
             textTheme: TextTheme(
-              // Apply Google font to bodyLarge (or bodyText1 for older versions)
               bodyLarge: GoogleFonts.getFont(fontProvider.currentFont),
               bodyMedium: GoogleFonts.getFont(fontProvider.currentFont),
               bodySmall: GoogleFonts.getFont(fontProvider.currentFont),
@@ -44,7 +53,6 @@ class MyApp extends StatelessWidget {
               labelLarge: GoogleFonts.getFont(fontProvider.currentFont),
               labelMedium: GoogleFonts.getFont(fontProvider.currentFont),
               labelSmall: GoogleFonts.getFont(fontProvider.currentFont),
-              // Add other text styles if needed
             ),
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.deepPurple,
@@ -53,7 +61,6 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           darkTheme: ThemeData(
-            // Apply the selected font dynamically for dark mode
             textTheme: TextTheme(
               bodyLarge: GoogleFonts.getFont(fontProvider.currentFont),
               bodyMedium: GoogleFonts.getFont(fontProvider.currentFont),
@@ -77,8 +84,29 @@ class MyApp extends StatelessWidget {
           themeMode: Provider.of<ThemeProvider>(context).isDarkMode
               ? ThemeMode.dark
               : ThemeMode.light,
-          home: StartPage(),
+          home:
+              _buildHomeScreen(), // Set the home screen based on authentication state
         );
+      },
+    );
+  }
+
+  // Function to check if the user is logged in and navigate accordingly
+  Widget _buildHomeScreen() {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance
+          .authStateChanges(), // Listen to auth state changes
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // You can display a loading indicator while checking auth state
+          return SplashScreen();
+        } else if (snapshot.hasData) {
+          // If user is logged in, navigate to HomeScreen
+          return HomeScreen();
+        } else {
+          // If no user is logged in, navigate to SplashScreen (or LoginPage)
+          return SplashScreen();
+        }
       },
     );
   }

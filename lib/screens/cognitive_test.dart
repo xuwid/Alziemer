@@ -238,7 +238,9 @@ class _CognitiveTestPageState extends State<CognitiveTestPage> {
               iconSize: 36,
               splashRadius: 24,
             ),
+            backgroundColor: const Color.fromARGB(255, 248, 234, 247),
           ),
+          backgroundColor: const Color.fromARGB(255, 248, 234, 247),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
